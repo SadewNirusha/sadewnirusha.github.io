@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Let It Go - Stress Relief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0b0e1a;
+  --surface: #111528;
+  --ink: #e8e2d5;
+  --muted: #7a7d96;
+  --accent1: #c5a97b;
+  --accent2: #7b9fc5;
+  --accent3: #c57ba3;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: #0b0e1a;
+  color: #e8e2d5;
+  font-family: 'Lato', Arial, sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+}
+
+canvas#starfield {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.scene {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1.5rem 5rem;
+  gap: 2rem;
+}
+
+header { text-align: center; }
+header h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 3rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: #c5a97b;
+}
+header p {
+  margin-top: 0.4rem;
+  font-size: 1rem;
+  font-style: italic;
+  color: #7a7d96;
+  letter-spacing: 0.06em;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.tab {
+  padding: 0.4rem 1.1rem;
+  border: 1px solid #2e3350;
+  border-radius: 100px;
+  background: transparent;
+  color: #7a7d96;
+  font-family: 'Lato', Arial, sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.07em;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.tab:hover { border-color: #c5a97b; color: #c5a97b; }
+.tab.active { background-color: #c5a97b; border-color: #c5a97b; color: #0b0e1a; }
+
+.panel {
+  display: none;
+  width: 100%;
+  max-width: 660px;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+.panel.visible { display: flex; }
+
+/* BREATHE */
+.breath-guide {
+  position: relative;
+  width: 220px; height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.breath-ring {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  border: 2px solid #7b9fc5;
+  opacity: 0.3;
+}
+.breath-ring.pulse { animation: breatheScale 8s ease-in-out infinite; }
+.breath-ring.pace6  { animation-duration: 12s; }
+.breath-ring.pace8  { animation-duration: 16s; }
+
+.breath-circle {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, #7b9fc5, #1a2a45);
+  box-shadow: 0 0 60px rgba(123,159,197,0.3);
+}
+.breath-circle.pulse { animation: breatheScale 8s ease-in-out infinite; }
+.breath-circle.pace6  { animation-duration: 12s; }
+.breath-circle.pace8  { animation-duration: 16s; }
+
+@keyframes breatheScale {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50%       { transform: scale(1.55); opacity: 1; }
+}
+
+.breath-label {
+  margin-top: 0.8rem;
+  font-size: 1.3rem;
+  letter-spacing: 0.12em;
+  color: #7b9fc5;
+  min-height: 2rem;
+  text-align: center;
+  font-style: italic;
+}
+.breath-sublabel {
+  font-size: 0.85rem;
+  color: #7a7d96;
+  letter-spacing: 0.07em;
+  text-align: center;
+}
+.breath-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.btn-blue {
+  padding: 0.55rem 1.8rem;
+  border: 1.5px solid #7b9fc5;
+  border-radius: 100px;
+  background: transparent;
+  color: #7b9fc5;
+  font-family: 'Lato', Arial, sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.btn-blue:hover, .btn-blue.active { background-color: #7b9fc5; color: #0b0e1a; }
+
+.pace-selector { display: flex; gap: 0.35rem; }
+.pace-btn {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid #2e3350;
+  border-radius: 100px;
+  background: transparent;
+  color: #7a7d96;
+  font-family: 'Lato', Arial, sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pace-btn:hover, .pace-btn.active { border-color: #7b9fc5; color: #7b9fc5; }
+
+/* RELEASE */
+.release-label {
+  font-size: 0.95rem;
+  color: #7a7d96;
+  font-style: italic;
+  text-align: center;
+}
+#release-input {
+  width: 100%;
+  min-height: 130px;
+  background-color: #111528;
+  border: 1px solid #2b2f4a;
+  border-radius: 12px;
+  padding: 1.1rem 1.3rem;
+  color: #e8e2d5;
+  font-family: 'Lato', Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: none;
+  outline: none;
+  transition: border-color 0.25s;
+}
+#release-input:focus { border-color: #c57ba3; }
+.release-actions {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.btn-pink {
+  padding: 0.55rem 1.6rem;
+  border: 1.5px solid #c57ba3;
+  border-radius: 100px;
+  background: transparent;
+  color: #c57ba3;
+  font-family: 'Lato', Arial, sans-serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.btn-pink:hover { background-color: #c57ba3; color: #0b0e1a; }
+
+.btn-gold {
+  padding: 0.55rem 1.6rem;
+  border: 1.5px solid #c5a97b;
+  border-radius: 100px;
+  background: transparent;
+  color: #c5a97b;
+  font-family: 'Lato', Arial, sans-serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.btn-gold:hover { background-color: #c5a97b; color: #0b0e1a; }
+
+/* FIRE OVERLAY */
+#fire-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(10,8,5,0.93);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+  gap: 1.5rem;
+}
+#fire-overlay.show { opacity: 1; pointer-events: all; }
+#fire-canvas { border-radius: 12px; display: block; }
+.fire-message {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.3rem;
+  color: #c5a97b;
+  text-align: center;
+  letter-spacing: 0.06em;
+  font-style: italic;
+}
+
+/* DISSOLVE OVERLAY */
+#dissolve-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(8,10,22,0.95);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+  gap: 2rem;
+  padding: 2rem;
+}
+#dissolve-overlay.show { opacity: 1; pointer-events: all; }
+#dissolve-words {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.6rem;
+  color: #e8e2d5;
+  text-align: center;
+  max-width: 500px;
+  line-height: 1.6;
+  transition: opacity 3s, filter 3s, transform 3s;
+}
+#dissolve-words.gone {
+  opacity: 0;
+  filter: blur(16px);
+  transform: scale(1.1) translateY(-18px);
+}
+#dissolve-after {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  color: #7b9fc5;
+  font-size: 1.1rem;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+#dissolve-after.visible { opacity: 1; }
+
+.overlay-close {
+  padding: 0.4rem 1.2rem;
+  border: 1px solid #3a3d58;
+  border-radius: 100px;
+  background: transparent;
+  color: #7a7d96;
+  font-family: 'Lato', Arial, sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.overlay-close:hover { border-color: #7a7d96; color: #e8e2d5; }
+
+/* POP IT */
+.shake-desc {
+  font-size: 0.95rem;
+  color: #7a7d96;
+  font-style: italic;
+  text-align: center;
+}
+.score-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  background-color: #111528;
+  border-radius: 10px;
+  border: 1px solid #1e2238;
+}
+.score-num {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  color: #c5a97b;
+}
+.score-label { font-size: 0.8rem; color: #7a7d96; font-style: italic; }
+#refill-btn {
+  padding: 0.4rem 1.2rem;
+  border: 1px solid #c5a97b;
+  border-radius: 100px;
+  background: transparent;
+  color: #c5a97b;
+  font-family: 'Lato', Arial, sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.22s;
+}
+#refill-btn:hover { background-color: #c5a97b; color: #0b0e1a; }
+
+.bubble-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.7rem;
+  width: 100%;
+}
+.bubble {
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: transform 0.12s;
+  user-select: none;
+  border: 2px solid rgba(255,255,255,0.1);
+}
+.bubble:hover { transform: scale(1.08); }
+.bubble:active { transform: scale(0.92); }
+.bubble.pop { animation: popBubble 0.35s ease forwards; }
+@keyframes popBubble {
+  0%   { transform: scale(1); opacity: 1; }
+  40%  { transform: scale(1.35); opacity: 0.7; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+/* SOUNDS */
+.sound-note {
+  font-size: 0.9rem;
+  color: #7a7d96;
+  font-style: italic;
+  text-align: center;
+}
+.sound-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.8rem;
+  width: 100%;
+}
+.sound-card {
+  background-color: #111528;
+  border: 1px solid #1e2238;
+  border-radius: 14px;
+  padding: 1.1rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  user-select: none;
+}
+.sound-card:hover { border-color: #c5a97b; transform: translateY(-2px); }
+.sound-card.playing { border-color: #c5a97b; box-shadow: 0 0 20px rgba(197,169,123,0.2); }
+.sound-icon { font-size: 2rem; }
+.sound-name { font-size: 0.8rem; letter-spacing: 0.08em; color: #7a7d96; text-align: center; }
+.sound-wave { display: flex; align-items: center; gap: 2px; height: 16px; }
+.wave-bar { width: 3px; border-radius: 2px; background-color: #c5a97b; opacity: 0; }
+.sound-card.playing .wave-bar { opacity: 1; animation: waveBounce 0.8s ease-in-out infinite; }
+.wave-bar:nth-child(1) { height: 6px;  animation-delay: 0s;    }
+.wave-bar:nth-child(2) { height: 12px; animation-delay: 0.1s;  }
+.wave-bar:nth-child(3) { height: 9px;  animation-delay: 0.2s;  }
+.wave-bar:nth-child(4) { height: 14px; animation-delay: 0.3s;  }
+.wave-bar:nth-child(5) { height: 7px;  animation-delay: 0.15s; }
+@keyframes waveBounce {
+  0%, 100% { transform: scaleY(1); }
+  50%       { transform: scaleY(0.35); }
+}
+
+/* MANTRAS */
+.mantra-card {
+  background-color: #111528;
+  border: 1px solid #2b2f4a;
+  border-radius: 18px;
+  padding: 2.2rem 2rem;
+  width: 100%;
+  text-align: center;
+}
+#mantra-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem;
+  line-height: 1.55;
+  color: #e8e2d5;
+  font-style: italic;
+  transition: opacity 0.4s, transform 0.4s;
+}
+#mantra-text.hidden { opacity: 0; transform: translateY(8px); }
+#mantra-attr {
+  margin-top: 0.7rem;
+  font-size: 0.8rem;
+  color: #7a7d96;
+  letter-spacing: 0.1em;
+  transition: opacity 0.4s;
+}
+#mantra-attr.hidden { opacity: 0; }
+.btn-mantra {
+  padding: 0.55rem 1.8rem;
+  border: 1.5px solid #c5a97b;
+  border-radius: 100px;
+  background: transparent;
+  color: #c5a97b;
+  font-family: 'Lato', Arial, sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.btn-mantra:hover { background-color: #c5a97b; color: #0b0e1a; }
+
+footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #353856;
+  padding-bottom: 1rem;
+  font-style: italic;
+  letter-spacing: 0.1em;
+}
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+
+<!-- Fire overlay -->
+<div id="fire-overlay">
+  <canvas id="fire-canvas" width="300" height="300"></canvas>
+  <div class="fire-message">Released. It no longer holds you.</div>
+  <button class="overlay-close" onclick="closeFireOverlay()">Close</button>
+</div>
+
+<!-- Dissolve overlay -->
+<div id="dissolve-overlay">
+  <div id="dissolve-words"></div>
+  <div id="dissolve-after">gone.</div>
+  <button class="overlay-close" onclick="closeDissolveOverlay()">Close</button>
+</div>
+
+<div class="scene">
+
+  <header>
+    <h1>Let It Go</h1>
+    <p>a quiet space to breathe, release, and return to yourself</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('breathe', this)">Breathe</button>
+    <button class="tab" onclick="switchTab('release', this)">Release</button>
+    <button class="tab" onclick="switchTab('shake', this)">Pop It</button>
+    <button class="tab" onclick="switchTab('sound', this)">Sounds</button>
+    <button class="tab" onclick="switchTab('mantra', this)">Mantras</button>
+  </div>
+
+  <!-- BREATHE -->
+  <div class="panel visible" id="panel-breathe">
+    <div class="breath-guide">
+      <div class="breath-ring" id="breath-ring"></div>
+      <div class="breath-circle" id="breath-circle"></div>
+    </div>
+    <div class="breath-label" id="breath-label">ready</div>
+    <div class="breath-sublabel" id="breath-sublabel">choose a pace and begin</div>
+    <div class="breath-controls">
+      <button class="btn-blue" id="breath-btn" onclick="toggleBreath()">Begin</button>
+      <div class="pace-selector">
+        <button class="pace-btn active" onclick="setPace(this, 4)">4s</button>
+        <button class="pace-btn" onclick="setPace(this, 6)">6s</button>
+        <button class="pace-btn" onclick="setPace(this, 8)">8s</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RELEASE -->
+  <div class="panel" id="panel-release">
+    <p class="release-label">Write what weighs on you. Then let it go.</p>
+    <textarea id="release-input" placeholder="Type your worry, frustration, or fear..."></textarea>
+    <div class="release-actions">
+      <button class="btn-pink" onclick="burnIt()">&#128293; Burn It</button>
+      <button class="btn-gold" onclick="dissolveIt()">&#10024; Dissolve It</button>
+    </div>
+  </div>
+
+  <!-- POP IT -->
+  <div class="panel" id="panel-shake">
+    <p class="shake-desc">Pop the bubbles. Let the tension out.</p>
+    <div class="score-bar">
+      <div>
+        <div class="score-num" id="pop-score">0</div>
+        <div class="score-label">popped</div>
+      </div>
+      <button id="refill-btn" onclick="refillBubbles()">Refill</button>
+    </div>
+    <div class="bubble-grid" id="bubble-grid"></div>
+  </div>
+
+  <!-- SOUNDS -->
+  <div class="panel" id="panel-sound">
+    <p class="sound-note">Tap to play a soothing soundscape</p>
+    <div class="sound-grid" id="sound-grid"></div>
+  </div>
+
+  <!-- MANTRAS -->
+  <div class="panel" id="panel-mantra">
+    <div class="mantra-card">
+      <div id="mantra-text">Loading...</div>
+      <div id="mantra-attr"></div>
+    </div>
+    <button class="btn-mantra" onclick="nextMantra()">Next Mantra</button>
+  </div>
+
+</div>
+
+<footer>take a breath &middot; you are here &middot; this moment is enough</footer>
+
+<script>
+/* ==========================
+   STARFIELD
+========================== */
+(function () {
+  var c = document.getElementById('starfield');
+  var ctx = c.getContext('2d');
+  var W, H, stars = [];
+
+  function resize() {
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+
+  function init() {
+    stars = [];
+    for (var i = 0; i < 150; i++) {
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.1 + 0.2,
+        a: Math.random(),
+        da: (Math.random() - 0.5) * 0.004
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      s.a += s.da;
+      if (s.a <= 0.05 || s.a >= 0.99) s.da *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(220,215,200,' + s.a + ')';
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', function () { resize(); init(); });
+  resize(); init(); draw();
+}());
+
+/* ==========================
+   TABS
+========================== */
+function switchTab(name, btn) {
+  var tabs = document.querySelectorAll('.tab');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  btn.classList.add('active');
+
+  var panels = document.querySelectorAll('.panel');
+  for (var j = 0; j < panels.length; j++) panels[j].classList.remove('visible');
+  document.getElementById('panel-' + name).classList.add('visible');
+
+  if (name === 'shake') buildBubbles();
+  if (name === 'sound') buildSounds();
+  if (name === 'mantra') showMantra(true);
+}
+
+/* ==========================
+   BREATHE
+========================== */
+var breathRunning = false;
+var breathPace = 4;
+var breathTimer = null;
+var bIdx = 0;
+var breathSeq = [
+  { label: 'breathe in',  sub: 'through your nose', dur: 1.0 },
+  { label: 'hold',        sub: 'gentle stillness',  dur: 0.5 },
+  { label: 'breathe out', sub: 'slowly, completely',dur: 1.0 },
+  { label: 'rest',        sub: 'peace',             dur: 0.3 }
+];
+
+function setPace(btn, s) {
+  var all = document.querySelectorAll('.pace-btn');
+  for (var i = 0; i < all.length; i++) all[i].classList.remove('active');
+  btn.classList.add('active');
+  breathPace = s;
+  if (breathRunning) { stopBreath(); startBreath(); }
+}
+
+function toggleBreath() {
+  if (breathRunning) { stopBreath(); } else { startBreath(); }
+}
+
+function startBreath() {
+  breathRunning = true;
+  var circle = document.getElementById('breath-circle');
+  var ring   = document.getElementById('breath-ring');
+  document.getElementById('breath-btn').textContent = 'Pause';
+  document.getElementById('breath-btn').classList.add('active');
+  circle.className = 'breath-circle pulse' + (breathPace !== 4 ? ' pace' + breathPace : '');
+  ring.className   = 'breath-ring pulse'   + (breathPace !== 4 ? ' pace' + breathPace : '');
+  bIdx = 0;
+  runCycle();
+}
+
+function stopBreath() {
+  breathRunning = false;
+  clearTimeout(breathTimer);
+  document.getElementById('breath-btn').textContent = 'Begin';
+  document.getElementById('breath-btn').classList.remove('active');
+  document.getElementById('breath-circle').className = 'breath-circle';
+  document.getElementById('breath-ring').className   = 'breath-ring';
+  document.getElementById('breath-label').textContent    = 'paused';
+  document.getElementById('breath-sublabel').textContent = "whenever you're ready";
+}
+
+function runCycle() {
+  if (!breathRunning) return;
+  var step = breathSeq[bIdx % breathSeq.length];
+  document.getElementById('breath-label').textContent    = step.label;
+  document.getElementById('breath-sublabel').textContent = step.sub;
+  bIdx++;
+  breathTimer = setTimeout(runCycle, breathPace * step.dur * 1000);
+}
+
+/* ==========================
+   RELEASE
+========================== */
+var fireAnimID = null;
+var fireActive = false;
+
+function burnIt() {
+  var txt = document.getElementById('release-input').value.trim();
+  if (!txt) { document.getElementById('release-input').focus(); return; }
+  document.getElementById('fire-overlay').classList.add('show');
+  fireActive = true;
+  animateFire();
+  setTimeout(function () { document.getElementById('release-input').value = ''; }, 1800);
+}
+
+function closeFireOverlay() {
+  fireActive = false;
+  if (fireAnimID) cancelAnimationFrame(fireAnimID);
+  document.getElementById('fire-overlay').classList.remove('show');
+}
+
+function animateFire() {
+  if (!fireActive) return;
+  var canvas = document.getElementById('fire-canvas');
+  var ctx = canvas.getContext('2d');
+  var t = Date.now() / 1000;
+  ctx.clearRect(0, 0, 300, 300);
+  for (var i = 0; i < 6; i++) {
+    var off = Math.sin(t * 1.3 + i * 1.1) * 16;
+    var h   = 160 + Math.sin(t * 2 + i * 0.9) * 35;
+    var cx  = 150 + off;
+    var grad = ctx.createRadialGradient(cx, 285, 8, cx, 285 - h, h * 0.9);
+    grad.addColorStop(0,    'rgba(255,200,60,0.92)');
+    grad.addColorStop(0.35, 'rgba(255,100,20,0.7)');
+    grad.addColorStop(0.7,  'rgba(180,30,10,0.4)');
+    grad.addColorStop(1,    'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.ellipse(cx, 285, 35 + i * 4, h, 0, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+  }
+  for (var j = 0; j < 10; j++) {
+    var ex = 90 + Math.sin(t * 3 + j) * 80;
+    var ey = 250 - ((t * 70 + j * 28) % 200);
+    var ea = 0.5 + Math.sin(t * 5 + j) * 0.4;
+    ctx.beginPath();
+    ctx.arc(ex, ey, 1.5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,200,80,' + ea + ')';
+    ctx.fill();
+  }
+  fireAnimID = requestAnimationFrame(animateFire);
+}
+
+function dissolveIt() {
+  var txt = document.getElementById('release-input').value.trim();
+  if (!txt) { document.getElementById('release-input').focus(); return; }
+  var el    = document.getElementById('dissolve-words');
+  var after = document.getElementById('dissolve-after');
+  el.textContent = txt;
+  el.classList.remove('gone');
+  after.classList.remove('visible');
+  document.getElementById('dissolve-overlay').classList.add('show');
+  setTimeout(function () { el.classList.add('gone'); }, 600);
+  setTimeout(function () { after.classList.add('visible'); }, 3200);
+  setTimeout(function () { document.getElementById('release-input').value = ''; }, 1000);
+}
+
+function closeDissolveOverlay() {
+  document.getElementById('dissolve-overlay').classList.remove('show');
+}
+
+/* ==========================
+   POP IT
+========================== */
+var popCount = 0;
+var bubblesBuilt = false;
+var EMOJIS = ['😤','💢','😠','😩','😫','💨','⚡','🌀','🔥','😮'];
+var BCOLORS = ['#3a1a4a','#1a2a4a','#1a3a2a','#3a2a1a','#3a1a2a','#1a3a3a'];
+
+function buildBubbles() {
+  if (bubblesBuilt) return;
+  refillBubbles();
+  bubblesBuilt = true;
+}
+
+function refillBubbles() {
+  var grid = document.getElementById('bubble-grid');
+  grid.innerHTML = '';
+  for (var i = 0; i < 16; i++) grid.appendChild(makeBubble());
+}
+
+function makeBubble() {
+  var b = document.createElement('div');
+  b.className = 'bubble';
+  b.style.backgroundColor = BCOLORS[Math.floor(Math.random() * BCOLORS.length)];
+  b.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+  b.addEventListener('click', (function (el) {
+    return function () { popBubble(el); };
+  }(b)));
+  return b;
+}
+
+function popBubble(b) {
+  if (b.classList.contains('pop')) return;
+  popCount++;
+  document.getElementById('pop-score').textContent = popCount;
+  b.classList.add('pop');
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) {
+      var ac = new AC();
+      var osc = ac.createOscillator();
+      var g = ac.createGain();
+      osc.connect(g); g.connect(ac.destination);
+      osc.frequency.value = 200 + Math.random() * 200;
+      g.gain.setValueAtTime(0.2, ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.08);
+      osc.start(); osc.stop(ac.currentTime + 0.08);
+    }
+  } catch (e) {}
+  setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 350);
+}
+
+/* ==========================
+   SOUNDS
+========================== */
+var SOUNDS = [
+  { name: 'Rain',   icon: '🌧', type: 'rain'   },
+  { name: 'Ocean',  icon: '🌊', type: 'ocean'  },
+  { name: 'Wind',   icon: '🍃', type: 'wind'   },
+  { name: 'Fire',   icon: '🔥', type: 'fire'   },
+  { name: 'Stream', icon: '💧', type: 'stream' },
+  { name: 'Forest', icon: '🌿', type: 'forest' }
+];
+var activeNodes = null;
+var sharedAC = null;
+var soundsBuilt = false;
+
+function getAC() {
+  if (!sharedAC) {
+    var Ctx = window.AudioContext || window.webkitAudioContext;
+    if (Ctx) sharedAC = new Ctx();
+  }
+  return sharedAC;
+}
+
+function buildSounds() {
+  if (soundsBuilt) return;
+  soundsBuilt = true;
+  var grid = document.getElementById('sound-grid');
+  for (var i = 0; i < SOUNDS.length; i++) {
+    (function (s) {
+      var card = document.createElement('div');
+      card.className = 'sound-card';
+
+      var icon = document.createElement('div');
+      icon.className = 'sound-icon';
+      icon.textContent = s.icon;
+
+      var nm = document.createElement('div');
+      nm.className = 'sound-name';
+      nm.textContent = s.name;
+
+      var wave = document.createElement('div');
+      wave.className = 'sound-wave';
+      for (var b = 0; b < 5; b++) {
+        var bar = document.createElement('div');
+        bar.className = 'wave-bar';
+        wave.appendChild(bar);
+      }
+
+      card.appendChild(icon);
+      card.appendChild(nm);
+      card.appendChild(wave);
+      card.addEventListener('click', function () { toggleSound(s, card); });
+      grid.appendChild(card);
+    }(SOUNDS[i]));
+  }
+}
+
+function toggleSound(s, card) {
+  var was = card.classList.contains('playing');
+  stopAllSounds();
+  if (!was) { card.classList.add('playing'); playAmbient(s); }
+}
+
+function stopAllSounds() {
+  var cards = document.querySelectorAll('.sound-card');
+  for (var i = 0; i < cards.length; i++) cards[i].classList.remove('playing');
+  if (activeNodes) {
+    try {
+      var ac = getAC();
+      activeNodes.mg.gain.setTargetAtTime(0, ac.currentTime, 0.3);
+      var fn = activeNodes.stop;
+      setTimeout(fn, 400);
+    } catch (e) {}
+    activeNodes = null;
+  }
+}
+
+function makeNoise(ac) {
+  var buf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
+  var data = buf.getChannelData(0);
+  for (var i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  var src = ac.createBufferSource();
+  src.buffer = buf;
+  src.loop = true;
+  return src;
+}
+
+function playAmbient(s) {
+  var ac = getAC();
+  if (!ac) return;
+  var mg = ac.createGain();
+  mg.gain.setValueAtTime(0, ac.currentTime);
+  mg.gain.setTargetAtTime(0.5, ac.currentTime, 0.4);
+  mg.connect(ac.destination);
+  var srcs = [];
+
+  if (s.type === 'rain') {
+    var n = makeNoise(ac);
+    var f1 = ac.createBiquadFilter(); f1.type = 'bandpass'; f1.frequency.value = 2000; f1.Q.value = 0.5;
+    var f2 = ac.createBiquadFilter(); f2.type = 'highpass'; f2.frequency.value = 800;
+    var g  = ac.createGain(); g.gain.value = 0.7;
+    n.connect(f1); f1.connect(f2); f2.connect(g); g.connect(mg);
+    n.start(); srcs.push(n);
+
+  } else if (s.type === 'ocean') {
+    var n2 = makeNoise(ac);
+    var fOc = ac.createBiquadFilter(); fOc.type = 'lowpass'; fOc.frequency.value = 500;
+    var lfo = ac.createOscillator(); lfo.frequency.value = 0.15;
+    var lg  = ac.createGain(); lg.gain.value = 200;
+    var gOc = ac.createGain(); gOc.gain.value = 0.6;
+    lfo.connect(lg); lg.connect(fOc.frequency);
+    n2.connect(fOc); fOc.connect(gOc); gOc.connect(mg);
+    n2.start(); lfo.start(); srcs.push(n2, lfo);
+
+  } else if (s.type === 'wind') {
+    var nW = makeNoise(ac);
+    var fW = ac.createBiquadFilter(); fW.type = 'bandpass'; fW.frequency.value = 400; fW.Q.value = 0.3;
+    var lW = ac.createOscillator(); lW.frequency.value = 0.08;
+    var lWg = ac.createGain(); lWg.gain.value = 0.25;
+    var gW = ac.createGain(); gW.gain.value = 0.5;
+    lW.connect(lWg); lWg.connect(gW.gain);
+    nW.connect(fW); fW.connect(gW); gW.connect(mg);
+    nW.start(); lW.start(); srcs.push(nW, lW);
+
+  } else if (s.type === 'fire') {
+    var nF = makeNoise(ac);
+    var fF = ac.createBiquadFilter(); fF.type = 'bandpass'; fF.frequency.value = 700; fF.Q.value = 2;
+    var gF = ac.createGain(); gF.gain.value = 0.3;
+    nF.connect(fF); fF.connect(gF); gF.connect(mg);
+    var nF2 = makeNoise(ac);
+    var fF2 = ac.createBiquadFilter(); fF2.type = 'lowpass'; fF2.frequency.value = 80;
+    var gF2 = ac.createGain(); gF2.gain.value = 0.4;
+    nF2.connect(fF2); fF2.connect(gF2); gF2.connect(mg);
+    nF.start(); nF2.start(); srcs.push(nF, nF2);
+
+  } else if (s.type === 'stream') {
+    var nSt = makeNoise(ac);
+    var fSt = ac.createBiquadFilter(); fSt.type = 'bandpass'; fSt.frequency.value = 1200; fSt.Q.value = 1;
+    var lSt = ac.createOscillator(); lSt.frequency.value = 0.4;
+    var lStg = ac.createGain(); lStg.gain.value = 400;
+    var gSt = ac.createGain(); gSt.gain.value = 0.5;
+    lSt.connect(lStg); lStg.connect(fSt.frequency);
+    nSt.connect(fSt); fSt.connect(gSt); gSt.connect(mg);
+    nSt.start(); lSt.start(); srcs.push(nSt, lSt);
+
+  } else {
+    var nFo = makeNoise(ac);
+    var fFo = ac.createBiquadFilter(); fFo.type = 'bandpass'; fFo.frequency.value = 600; fFo.Q.value = 0.4;
+    var gFo = ac.createGain(); gFo.gain.value = 0.35;
+    nFo.connect(fFo); fFo.connect(gFo); gFo.connect(mg);
+    var nFo2 = makeNoise(ac);
+    var fFo2 = ac.createBiquadFilter(); fFo2.type = 'highpass'; fFo2.frequency.value = 3000;
+    var gFo2 = ac.createGain(); gFo2.gain.value = 0.15;
+    nFo2.connect(fFo2); fFo2.connect(gFo2); gFo2.connect(mg);
+    nFo.start(); nFo2.start(); srcs.push(nFo, nFo2);
+  }
+
+  activeNodes = {
+    mg: mg,
+    stop: function () {
+      for (var k = 0; k < srcs.length; k++) {
+        try { srcs[k].stop(); } catch (e) {}
+      }
+    }
+  };
+}
+
+/* ==========================
+   MANTRAS
+========================== */
+var MANTRAS = [
+  { text: 'You have survived 100% of your hardest days. This one is no different.', attr: '' },
+  { text: "You don't have to be calm to be okay. You just have to be here.", attr: '' },
+  { text: 'Your nervous system is doing its best. Be patient with it.', attr: '' },
+  { text: 'This feeling is a visitor, not a resident.', attr: '' },
+  { text: 'You are not behind. You are on your own path.', attr: '' },
+  { text: 'Rest is not a reward. It is a right.', attr: '' },
+  { text: 'The present moment is always survivable.', attr: '' },
+  { text: 'You are allowed to take up space. All the space you need.', attr: '' },
+  { text: 'One breath at a time. That is enough.', attr: '' },
+  { text: 'Storms pass. Roots hold.', attr: '' },
+  { text: 'You are not your thoughts. You are the one noticing them.', attr: '' },
+  { text: 'Soften the jaw. Unclench the fists. The world will wait.', attr: '' },
+  { text: 'Within you there is a stillness that no storm can reach.', attr: '— Hermann Hesse' },
+  { text: 'You do not have to earn your rest. You do not have to earn your peace.', attr: '' },
+  { text: 'The sky is still blue above the clouds.', attr: '' }
+];
+var mantraIdx = Math.floor(Math.random() * MANTRAS.length);
+
+function showMantra(immediate) {
+  var el = document.getElementById('mantra-text');
+  var at = document.getElementById('mantra-attr');
+  if (!immediate) { el.classList.add('hidden'); at.classList.add('hidden'); }
+  setTimeout(function () {
+    var m = MANTRAS[mantraIdx];
+    el.textContent = '\u201C' + m.text + '\u201D';
+    at.textContent = m.attr;
+    el.classList.remove('hidden');
+    at.classList.remove('hidden');
+  }, immediate ? 0 : 300);
+}
+
+function nextMantra() {
+  mantraIdx = (mantraIdx + 1) % MANTRAS.length;
+  showMantra(false);
+}
+
+/* Keyboard close */
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') { closeFireOverlay(); closeDissolveOverlay(); }
+});
+
+/* Init */
+showMantra(true);
+</script>
+</body>
+</html>
